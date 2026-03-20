@@ -1,42 +1,22 @@
-# sv
+# DollarView
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Full-stack financial tracking dashboard to monitor expenses, revenue, and profit with interactive charts and filtering.
 
-## Creating a project
+## Tech Stack
+- Frontend: SvelteKit, Tailwind CSS
+- Backend: Node.js, Express
+- Database: MongoDB
+- Charts: Chart.js
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Features
+- Track expenses and revenue
+- Interactive charts (bar, pie, doughnut)
+- Filter data by date and category
+- Clean and professional dashboard UI
+- Secure data handling
 
-```sh
-# create a new project
-npx sv create my-app
-```
+## Installation
 
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv@0.12.8 create --template minimal --types ts --add prettier eslint tailwindcss="plugins:forms" sveltekit-adapter="adapter:auto" --install npm dollarview
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+```bash
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
