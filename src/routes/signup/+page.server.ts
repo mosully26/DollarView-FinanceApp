@@ -60,6 +60,6 @@ export const actions: Actions = {
 			});
 		}
 
-		throw redirect(303, '/onboarding');
+		throw redirect(303, '/dashboard/onboarding');
 	}
 };

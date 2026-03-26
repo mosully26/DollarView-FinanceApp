@@ -4,18 +4,20 @@
 
 	let { data, form }: { data: PageData; form: ActionData | null } = $props();
 
-	let step = $state(data.preferences?.onboarding_step ?? 1);
+	const preferences = data.preferences;
+
+	let step = $state(preferences?.onboarding_step ?? 1);
 
 	let formState = $state({
-		monthly_budget: data.preferences?.monthly_budget?.toString() ?? '',
-		primary_goal: data.preferences?.primary_goal ?? '',
+		monthly_budget: preferences?.monthly_budget?.toString() ?? '',
+		primary_goal: preferences?.primary_goal ?? '',
 		tracks_business:
-			typeof data.preferences?.tracks_business === 'boolean'
-				? String(data.preferences.tracks_business)
+			typeof preferences?.tracks_business === 'boolean'
+				? String(preferences.tracks_business)
 				: '',
-		business_type: data.preferences?.business_type ?? '',
-		categories: (data.preferences?.categories ?? []) as string[],
-		alert_preference: data.preferences?.alert_preference ?? ''
+		business_type: preferences?.business_type ?? '',
+		categories: (preferences?.categories ?? []) as string[],
+		alert_preference: preferences?.alert_preference ?? ''
 	});
 
 	const totalSteps = 5;
@@ -169,8 +171,7 @@
 					</div>
 
 					<div
-						class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm"
-					>
+						class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
 						{Math.round((step / totalSteps) * 100)}% complete
 					</div>
 				</div>
@@ -205,39 +206,33 @@
 						<div class="grid gap-4 sm:grid-cols-3">
 							<button
 								type="button"
-								onclick={() => (form.monthly_budget = '1000')}
+								onclick={() => (formState.monthly_budget = '1000')}
 								class={`rounded-2xl border px-4 py-4 text-left transition ${
-									form.monthly_budget === '1000'
+									formState.monthly_budget === '1000'
 										? 'border-blue-600 bg-blue-50'
-										: 'border-slate-200 hover:bg-slate-50'
-								}`}
-							>
+										: 'border-slate-200 hover:bg-slate-50'}`}>
 								<p class="font-semibold text-slate-900">$1,000</p>
 								<p class="mt-1 text-sm text-slate-500">Starter budget</p>
 							</button>
 
 							<button
 								type="button"
-								onclick={() => (form.monthly_budget = '2500')}
+								onclick={() => (formState.monthly_budget = '2500')}
 								class={`rounded-2xl border px-4 py-4 text-left transition ${
-									form.monthly_budget === '2500'
+									formState.monthly_budget === '2500'
 										? 'border-blue-600 bg-blue-50'
-										: 'border-slate-200 hover:bg-slate-50'
-								}`}
-							>
+										: 'border-slate-200 hover:bg-slate-50'}`}>
 								<p class="font-semibold text-slate-900">$2,500</p>
 								<p class="mt-1 text-sm text-slate-500">Balanced budget</p>
 							</button>
 
 							<button
 								type="button"
-								onclick={() => (form.monthly_budget = '5000')}
+								onclick={() => (formState.monthly_budget = '5000')}
 								class={`rounded-2xl border px-4 py-4 text-left transition ${
-									form.monthly_budget === '5000'
+									formState.monthly_budget === '5000'
 										? 'border-blue-600 bg-blue-50'
-										: 'border-slate-200 hover:bg-slate-50'
-								}`}
-							>
+										: 'border-slate-200 hover:bg-slate-50'}`}>
 								<p class="font-semibold text-slate-900">$5,000+</p>
 								<p class="mt-1 text-sm text-slate-500">Higher-volume tracking</p>
 							</button>
@@ -246,16 +241,14 @@
 						<div>
 							<label
 								for="monthly-budget"
-								class="mb-2 block text-sm font-medium text-slate-700"
-							>
+								class="mb-2 block text-sm font-medium text-slate-700">
 								Or enter your own monthly budget
 							</label>
 							<input
 								id="monthly-budget"
-								bind:value={form.monthly_budget}
+								bind:value={formState.monthly_budget}
 								type="number"
-								placeholder="Enter monthly budget"
-							/>
+								placeholder="Enter monthly budget"/>
 						</div>
 
 						<div class="flex justify-end">
@@ -284,13 +277,11 @@
 							{#each goalOptions as option}
 								<button
 									type="button"
-									onclick={() => (form.primary_goal = option.value)}
+									onclick={() => (formState.primary_goal = option.value)}
 									class={`rounded-2xl border p-5 text-left transition ${
-										form.primary_goal === option.value
+										formState.primary_goal === option.value
 											? 'border-blue-600 bg-blue-50'
-											: 'border-slate-200 hover:bg-slate-50'
-									}`}
-								>
+											: 'border-slate-200 hover:bg-slate-50'}`}>
 									<p class="text-lg font-semibold text-slate-900">{option.title}</p>
 									<p class="mt-2 text-sm leading-6 text-slate-600">{option.desc}</p>
 								</button>
@@ -301,8 +292,7 @@
 							<button
 								type="button"
 								onclick={prevStep}
-								class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-							>
+								class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
 								Back
 							</button>
 
@@ -332,11 +322,9 @@
 								type="button"
 								onclick={() => selectUsage('false')}
 								class={`rounded-2xl border p-5 text-left transition ${
-									form.tracks_business === 'false'
+									formState.tracks_business === 'false'
 										? 'border-blue-600 bg-blue-50'
-										: 'border-slate-200 hover:bg-slate-50'
-								}`}
-							>
+										: 'border-slate-200 hover:bg-slate-50'}`}>
 								<p class="text-lg font-semibold text-slate-900">Personal finances</p>
 								<p class="mt-2 text-sm leading-6 text-slate-600">
 									Track expenses, budgets, and day-to-day personal spending.
@@ -347,11 +335,9 @@
 								type="button"
 								onclick={() => selectUsage('true')}
 								class={`rounded-2xl border p-5 text-left transition ${
-									form.tracks_business === 'true'
+									formState.tracks_business === 'true'
 										? 'border-blue-600 bg-blue-50'
-										: 'border-slate-200 hover:bg-slate-50'
-								}`}
-							>
+										: 'border-slate-200 hover:bg-slate-50'}`}>
 								<p class="text-lg font-semibold text-slate-900">Business finances</p>
 								<p class="mt-2 text-sm leading-6 text-slate-600">
 									Track revenue, expenses, categories, and business alerts.
@@ -359,20 +345,18 @@
 							</button>
 						</div>
 
-						{#if form.tracks_business === 'true'}
+						{#if formState.tracks_business === 'true'}
 							<div>
 								<label
 									for="business-type"
-									class="mb-2 block text-sm font-medium text-slate-700"
-								>
+									class="mb-2 block text-sm font-medium text-slate-700">
 									What type of business are you tracking?
 								</label>
 								<input
 									id="business-type"
-									bind:value={form.business_type}
+									bind:value={formState.business_type}
 									type="text"
-									placeholder="e.g. Ecommerce, Services, Retail, Beauty"
-								/>
+									placeholder="e.g. Ecommerce, Services, Retail, Beauty"/>
 							</div>
 						{/if}
 
@@ -380,8 +364,7 @@
 							<button
 								type="button"
 								onclick={prevStep}
-								class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-							>
+								class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
 								Back
 							</button>
 
@@ -412,27 +395,24 @@
 									type="button"
 									onclick={() => toggleCategory(category)}
 									class={`rounded-2xl border p-5 text-left transition ${
-										form.categories.includes(category)
+										formState.categories.includes(category)
 											? 'border-blue-600 bg-blue-50'
-											: 'border-slate-200 hover:bg-slate-50'
-									}`}
-								>
+											: 'border-slate-200 hover:bg-slate-50'}`}>
 									<p class="font-semibold text-slate-900">{category}</p>
 									<p class="mt-2 text-sm text-slate-500">
-										{form.categories.includes(category) ? 'Selected' : 'Tap to add'}
+										{formState.categories.includes(category) ? 'Selected' : 'Tap to add'}
 									</p>
 								</button>
 							{/each}
 						</div>
 
-						{#if form.categories.length > 0}
+						{#if formState.categories.length > 0}
 							<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
 								<p class="text-sm font-semibold text-slate-900">Selected categories</p>
 								<div class="mt-3 flex flex-wrap gap-2">
-									{#each form.categories as category}
+									{#each formState.categories as category}
 										<span
-											class="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700"
-										>
+											class="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
 											{category}
 										</span>
 									{/each}
@@ -444,8 +424,7 @@
 							<button
 								type="button"
 								onclick={prevStep}
-								class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-							>
+								class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
 								Back
 							</button>
 
@@ -478,9 +457,7 @@
 									class={`rounded-2xl border p-5 text-left transition ${
 										formState.alert_preference === option.value
 											? 'border-blue-600 bg-blue-50'
-											: 'border-slate-200 hover:bg-slate-50'
-									}`}
-								>
+											: 'border-slate-200 hover:bg-slate-50'}`}>
 									<p class="text-lg font-semibold text-slate-900">{option.title}</p>
 									<p class="mt-2 text-sm text-slate-600">{option.desc}</p>
 								</button>
@@ -495,20 +472,17 @@
 							<input
 								type="hidden"
 								name="categories"
-								value={JSON.stringify(formState.categories)}
-							/>
+								value={JSON.stringify(formState.categories)}/>
 							<input
 								type="hidden"
 								name="alert_preference"
-								value={formState.alert_preference}
-							/>
+								value={formState.alert_preference}/>
 
 							<div class="flex justify-between">
 								<button
 									type="button"
 									onclick={prevStep}
-									class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-								>
+									class="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
 									Back
 								</button>
 
@@ -520,11 +494,9 @@
 
 						{#if form?.success && form?.summary}
 							<div
-								class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-6"
-							>
+								class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-6">
 								<div
-									class="w-full max-w-2xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-2xl"
-								>
+									class="w-full max-w-2xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-2xl">
 									<p class="text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">
 										Setup complete
 									</p>
@@ -593,8 +565,7 @@
 											<div class="mt-3 flex flex-wrap gap-2">
 												{#each form.summary.categories as category}
 													<span
-														class="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700"
-													>
+														class="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
 														{category}
 													</span>
 												{/each}
@@ -605,8 +576,7 @@
 									<div class="mt-8 flex justify-end">
 										<a
 											href="/dashboard"
-											class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
-										>
+											class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700">
 											Continue to Dashboard
 										</a>
 									</div>
