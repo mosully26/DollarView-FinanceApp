@@ -1,19 +1,24 @@
 # DollarView
 
-Full-stack financial tracking dashboard to monitor expenses, revenue, and profit with interactive charts and filtering.
+Full-stack financial tracking dashboard to monitor revenue, expenses, and profit with interactive charts and filtering.
 
 ## Tech Stack
-- Frontend: SvelteKit, Tailwind CSS
-- Backend: Node.js, Express
-- Database: MongoDB
-- Charts: Chart.js
+- **Frontend:** SvelteKit, TypeScript, Tailwind CSS  
+- **Backend:** Supabase (Authentication + API)  
+- **Database:** PostgreSQL (via Supabase)  
+- **Charts & Visualization:** Chart.js  
+
+---
 
 ## Features
-- Track expenses and revenue
-- Interactive charts (bar, pie, doughnut)
-- Filter data by date and category
-- Clean and professional dashboard UI
-- Secure data handling
+- Track revenue, expenses, and profit in real time  
+- Interactive charts (line, bar, doughnut) for financial insights  
+- Filter transactions by date and category  
+- Clean, responsive dashboard UI  
+- Secure data handling with Supabase authentication  
+- Dynamic trend calculations and analytics  
+
+---
 
 ## Installation
 

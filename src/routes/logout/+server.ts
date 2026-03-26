@@ -1,7 +1,11 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
-export const GET: RequestHandler = async ({ locals }) => {
+export const POST: RequestHandler = async ({ locals, cookies }) => {
 	await locals.supabase.auth.signOut();
-	throw redirect(303, '/');
+
+	cookies.delete('sb-access-token', { path: '/' });
+	cookies.delete('sb-refresh-token', { path: '/' });
+
+	throw redirect(303, '/login');
 };

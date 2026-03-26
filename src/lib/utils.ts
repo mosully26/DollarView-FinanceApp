@@ -19,13 +19,16 @@ export function prettyDate(value: string) {
 	}).format(new Date(value));
 }
 
+export function isPremiumUser(plan?: string | null, subscriptionStatus?: string | null) {
+	return plan === 'premium' && subscriptionStatus === 'active';
+}
+
 export function cutoffDate(period: Period) {
 	if (period === 'all') return null;
 
 	const months = Number(period);
 	const now = new Date();
-	const date = new Date(now.getFullYear(), now.getMonth() - months + 1, 1);
-	return date;
+	return new Date(now.getFullYear(), now.getMonth() - months + 1, 1);
 }
 
 export function filterTransactions(rows: TransactionRow[], period: Period) {
@@ -52,25 +55,72 @@ export function summarize(rows: TransactionRow[]): MetricSummary {
 	};
 }
 
-export function monthlyBars(rows: TransactionRow[]): BarPoint[] {
-	const map = new Map<string, BarPoint>();
+export function monthlyBars(rows: TransactionRow[], period: Period): BarPoint[] {
+	if (period === 'all') {
+		return allTimeBars(rows);
+	}
 
-	for (const row of rows) {
-		const date = new Date(row.transaction_date);
-		const label = date.toLocaleString('en-US', {
+	const months = Number(period);
+	const now = new Date();
+	const points: BarPoint[] = [];
+
+	for (let i = months - 1; i >= 0; i--) {
+		const bucketDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+		const month = bucketDate.getMonth();
+		const year = bucketDate.getFullYear();
+
+		const label = bucketDate.toLocaleString('en-US', {
 			month: 'short',
 			year: '2-digit'
 		});
 
-		const current = map.get(label) ?? { label, revenue: 0, expenses: 0 };
+		const monthRows = rows.filter((row) => {
+			const rowDate = new Date(row.transaction_date);
+			return rowDate.getMonth() === month && rowDate.getFullYear() === year;
+		});
+
+		const revenue = monthRows
+			.filter((row) => row.type === 'REVENUE')
+			.reduce((sum, row) => sum + toNumber(row.amount), 0);
+
+		const expenses = monthRows
+			.filter((row) => row.type === 'EXPENSE')
+			.reduce((sum, row) => sum + toNumber(row.amount), 0);
+
+		points.push({
+			label,
+			revenue,
+			expenses
+		});
+	}
+
+	return points;
+}
+
+function allTimeBars(rows: TransactionRow[]): BarPoint[] {
+	if (!rows.length) return [];
+
+	const grouped = new Map<number, { revenue: number; expenses: number }>();
+
+	for (const row of rows) {
+		const date = new Date(row.transaction_date);
+		const year = date.getFullYear();
+
+		const current = grouped.get(year) ?? { revenue: 0, expenses: 0 };
 
 		if (row.type === 'REVENUE') current.revenue += toNumber(row.amount);
 		if (row.type === 'EXPENSE') current.expenses += toNumber(row.amount);
 
-		map.set(label, current);
+		grouped.set(year, current);
 	}
 
-	return [...map.values()];
+	return [...grouped.entries()]
+		.sort((a, b) => a[0] - b[0])
+		.map(([year, totals]) => ({
+			label: String(year),
+			revenue: totals.revenue,
+			expenses: totals.expenses
+		}));
 }
 
 export function categoryBreakdown(rows: TransactionRow[], type: 'EXPENSE' | 'REVENUE'): PiePoint[] {
@@ -81,7 +131,9 @@ export function categoryBreakdown(rows: TransactionRow[], type: 'EXPENSE' | 'REV
 		map.set(key, (map.get(key) ?? 0) + toNumber(row.amount));
 	}
 
-	return [...map.entries()].map(([label, value]) => ({ label, value }));
+	return [...map.entries()]
+		.map(([label, value]) => ({ label, value }))
+		.sort((a, b) => b.value - a.value);
 }
 
 export function periodLabel(period: Period) {

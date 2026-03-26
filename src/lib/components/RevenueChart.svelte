@@ -4,15 +4,27 @@
 
 	let canvas: HTMLCanvasElement;
 
+	const revenueData = [12000, 15000, 14000, 18000, 18210];
+	const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May'];
+
+	function calculateTrend(newValue: number, oldValue: number) {
+		if (newValue === 0) return 0;
+		return ((newValue - oldValue) / newValue) * 100;
+	}
+
+	const current = revenueData[revenueData.length - 1];
+	const previous = revenueData[revenueData.length - 2];
+	const trend = calculateTrend(current, previous);
+
 	onMount(() => {
 		const chart = new Chart(canvas, {
 			type: 'line',
 			data: {
-				labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+				labels,
 				datasets: [
 					{
 						label: 'Revenue',
-						data: [12000, 15000, 14000, 18000, 18420],
+						data: revenueData,
 						borderColor: '#3b82f6',
 						backgroundColor: 'rgba(59, 130, 246, 0.10)',
 						fill: true,
@@ -61,8 +73,8 @@
 					},
 					y: {
 						grid: {
-                            color: 'rgba(148, 163, 184, 0.15)'
-                        },
+							color: 'rgba(148, 163, 184, 0.15)'
+						},
 						border: {
 							display: false
 						},
@@ -88,11 +100,15 @@
 	<div class="mb-4 flex items-start justify-between">
 		<div>
 			<p class="text-sm font-medium text-slate-500">Revenue trend</p>
-			<h3 class="mt-1 text-xl font-bold text-slate-900">$18,420</h3>
+			<h3 class="mt-1 text-xl font-bold text-slate-900">${current.toLocaleString()}</h3>
 		</div>
 
-		<div class="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-600">
-			+12.4%
+		<div
+			class={`rounded-full px-3 py-1 text-xs font-medium ${
+				trend >= 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+			}`}
+		>
+			{trend >= 0 ? '+' : ''}{trend.toFixed(1)}%
 		</div>
 	</div>
 
