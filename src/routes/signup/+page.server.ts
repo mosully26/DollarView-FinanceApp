@@ -60,22 +60,6 @@ export const actions: Actions = {
 			});
 		}
 
-		const { error: profileError } = await locals.supabase.from('profiles').upsert({
-			id: user.id,
-			first_name: firstName || null,
-			last_name: lastName || null,
-			plan: 'free'
-		});
-
-		if (profileError) {
-			return fail(400, {
-				error: profileError.message,
-				email,
-				first_name: firstName,
-				last_name: lastName
-			});
-		}
-
 		throw redirect(303, '/onboarding');
 	}
 };
