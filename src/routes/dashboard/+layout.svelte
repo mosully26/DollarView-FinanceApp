@@ -15,7 +15,7 @@
 		{ href: '/dashboard/alerts', label: 'Alerts' },
 		{ href: '/dashboard/notifications', label: 'Notifications' },
 		{ href: '/dashboard/onboarding', label: 'Onboarding' },
-		{ href: '/dashboard/assistant', label: 'AI Assistant' }
+		{ href: '/dashboard/assistant', label: 'AI Assistant', premiumOnly: true }
 	];
 
 	let showWelcome = $state(true);
@@ -71,13 +71,43 @@
 				{#each navItems as item}
 					<a
 						href={item.href}
-						class={`block rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
+						class={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
 							page.url.pathname === item.href
 								? 'bg-blue-600 text-white shadow'
 								: 'text-slate-700 hover:bg-slate-100'
 						}`}
 					>
-						{item.label}
+						<div class="flex items-center gap-2">
+							<span>{item.label}</span>
+
+							{#if item.premiumOnly && !data.isPremium}
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									class={`h-4 w-4 ${
+										page.url.pathname === item.href ? 'text-white/90' : 'text-slate-400'
+									}`}
+								>
+									<rect x="3" y="11" width="18" height="10" rx="2" />
+									<path d="M7 11V8a5 5 0 0 1 10 0v3" />
+								</svg>
+							{/if}
+						</div>
+
+						{#if item.premiumOnly && !data.isPremium}
+							<span
+								class={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] ${
+									page.url.pathname === item.href
+										? 'bg-white/20 text-white'
+										: 'bg-amber-100 text-amber-700'
+								}`}
+							>
+								Premium
+							</span>
+						{/if}
 					</a>
 				{/each}
 			</nav>
