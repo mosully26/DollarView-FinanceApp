@@ -1,13 +1,20 @@
 <script lang="ts">
-	let step = $state(1);
+	import type { PageData } from './$types';
+
+	let { data }: { data: PageData } = $props();
+
+	let step = $state(data.preferences?.onboarding_step ?? 1);
 
 	let form = $state({
-		monthly_budget: '',
-		primary_goal: '',
-		tracks_business: '',
-		business_type: '',
-		categories: [] as string[],
-		alert_preference: ''
+		monthly_budget: data.preferences?.monthly_budget?.toString() ?? '',
+		primary_goal: data.preferences?.primary_goal ?? '',
+		tracks_business:
+			typeof data.preferences?.tracks_business === 'boolean'
+				? String(data.preferences.tracks_business)
+				: '',
+		business_type: data.preferences?.business_type ?? '',
+		categories: (data.preferences?.categories ?? []) as string[],
+		alert_preference: data.preferences?.alert_preference ?? ''
 	});
 
 	const totalSteps = 5;
@@ -103,7 +110,6 @@
 		return form.tracks_business === 'true' ? businessCategories : personalCategories;
 	}
 </script>
-
 <svelte:head>
 	<title>Onboarding | DollarView</title>
 </svelte:head>

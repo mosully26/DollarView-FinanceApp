@@ -44,7 +44,14 @@ export const actions: Actions = {
 		const alertPreference = String(formData.get('alert_preference') ?? '').trim();
 
 		const monthlyBudget = monthlyBudgetRaw ? Number(monthlyBudgetRaw) : null;
-		const categories = JSON.parse(categoriesRaw) as string[];
+
+		let categories: string[] = [];
+		try {
+			const parsed = JSON.parse(categoriesRaw);
+			categories = Array.isArray(parsed) ? parsed : [];
+		} catch {
+			categories = [];
+		}
 
 		const { error } = await locals.supabase.from('user_preferences').upsert({
 			user_id: user.id,
@@ -53,13 +60,16 @@ export const actions: Actions = {
 			tracks_business: tracksBusiness,
 			business_type: businessType || null,
 			alert_preference: alertPreference || null,
-			categories
+			categories,
+			onboarding_completed: true,
+			onboarding_step: 5,
+			updated_at: new Date().toISOString()
 		});
 
 		if (error) {
 			return fail(400, { error: error.message });
 		}
 
-		return { success: true };
+		throw redirect(303, '/dashboard');
 	}
 };
