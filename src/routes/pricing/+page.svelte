@@ -24,7 +24,7 @@
 			description: 'Advanced tools for growing businesses',
 			features: [
 				'Includes all Free features',
-				'Notifications and alerts',
+				'AI Assistant for financial questions and insights',
 				'Access to 5 additional charts and graphs',
 				'Built-in dark and light theme modes',
 				'Extended history filters up to 72 months + all-time',
