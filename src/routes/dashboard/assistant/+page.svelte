@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData | null } = $props();
@@ -105,117 +106,194 @@
 
 				<div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
 					<p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-						Try asking
+						Access
 					</p>
 					<p class="mt-2 text-base font-bold leading-7 text-slate-900">
-						“What changed this month?” or “What should I pay attention to?”
+						{#if data.isPremium}
+							Included with Premium
+						{:else}
+							Premium members only
+						{/if}
 					</p>
 				</div>
 			</div>
 		</div>
 	</section>
 
-	<section class="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
-		<div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm md:p-6">
-			<div class="mb-5">
-				<p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
-					Ask a question
-				</p>
-				<h2 class="mt-2 text-2xl font-bold text-slate-900">Chat with your financial assistant</h2>
-				<p class="mt-2 text-sm leading-6 text-slate-600">
-					Ask a direct question and DollarView will respond using your current business data.
-				</p>
+	{#if data.isPremium}
+		<section class="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+			<div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+				<div class="mb-5">
+					<p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
+						Ask a question
+					</p>
+					<h2 class="mt-2 text-2xl font-bold text-slate-900">Chat with your financial assistant</h2>
+					<p class="mt-2 text-sm leading-6 text-slate-600">
+						Ask a direct question and DollarView will respond using your current business data.
+					</p>
+				</div>
+
+				<form method="POST" class="space-y-4">
+					<div>
+						<label for="question" class="mb-2 block text-sm font-medium text-slate-700">
+							Your question
+						</label>
+						<textarea
+							id="question"
+							name="question"
+							rows="5"
+							placeholder="Example: What changed in my spending this month?"
+							class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
+							required
+						></textarea>
+					</div>
+
+					<div class="flex flex-wrap items-center gap-3">
+						<button type="submit" class="btn-primary">Ask Assistant</button>
+
+						<div class="text-sm text-slate-500">
+							Powered by your real transactions, alerts, and notifications.
+						</div>
+					</div>
+				</form>
+
+				{#if form?.error}
+					<div class="mt-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+						{form.error}
+					</div>
+				{/if}
+
+				{#if form?.answer}
+					<div
+						class="mt-6 rounded-[1.25rem] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-5"
+					>
+						<div class="flex items-start gap-3">
+							<div
+								class="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-sm font-bold text-white"
+							>
+								AI
+							</div>
+
+							<div class="min-w-0 flex-1">
+								<p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
+									Assistant response
+								</p>
+								<p class="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-700">
+									{form.answer}
+								</p>
+							</div>
+						</div>
+					</div>
+				{/if}
 			</div>
 
-			<form method="POST" class="space-y-4">
-				<div>
-					<label for="question" class="mb-2 block text-sm font-medium text-slate-700">
-						Your question
-					</label>
-					<textarea
-						id="question"
-						name="question"
-						rows="5"
-						placeholder="Example: What changed in my spending this month?"
-						class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
-						required
-					></textarea>
-				</div>
+			<div class="space-y-5">
+				<div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+					<p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
+						Suggested prompts
+					</p>
+					<h2 class="mt-2 text-2xl font-bold text-slate-900">Helpful questions to try</h2>
 
-				<div class="flex flex-wrap items-center gap-3">
-					<button type="submit" class="btn-primary">Ask Assistant</button>
-
-					<div class="text-sm text-slate-500">
-						Powered by your real transactions, alerts, and notifications.
+					<div class="mt-5 grid gap-3">
+						{#each promptCards as prompt}
+							<div
+								class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 transition hover:border-blue-200 hover:bg-blue-50/50"
+							>
+								<p class="text-sm font-medium text-slate-800">{prompt}</p>
+							</div>
+						{/each}
 					</div>
 				</div>
-			</form>
 
-			{#if form?.error}
-				<div class="mt-5 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-					{form.error}
+				<div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+					<p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
+						What it can do
+					</p>
+					<h2 class="mt-2 text-2xl font-bold text-slate-900">Use it like a finance guide</h2>
+
+					<div class="mt-5 space-y-3">
+						{#each capabilityCards as card}
+							<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+								<p class="text-sm font-semibold text-slate-900">{card.title}</p>
+								<p class="mt-1 text-sm leading-6 text-slate-600">
+									{card.desc}
+								</p>
+							</div>
+						{/each}
+					</div>
 				</div>
-			{/if}
+			</div>
+		</section>
+	{:else}
+		<section class="grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
+			<div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+				<p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
+					Premium feature
+				</p>
+				<h2 class="mt-2 text-2xl font-bold text-slate-900">AI Assistant is available on Premium</h2>
+				<p class="mt-3 text-sm leading-7 text-slate-600">
+					Upgrade to Premium to unlock AI-powered financial guidance using your transactions,
+					alerts, categories, and recent dashboard activity.
+				</p>
 
-			{#if form?.answer}
 				<div
-					class="mt-6 rounded-[1.25rem] border border-slate-200 bg-gradient-to-br from-slate-50 to-white p-5"
+					class="mt-6 rounded-[1.5rem] border border-dashed border-slate-300 bg-gradient-to-br from-slate-50 to-white p-8 text-center"
 				>
-					<div class="flex items-start gap-3">
-						<div
-							class="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-sm font-bold text-white"
-						>
-							AI
-						</div>
+					<div
+						class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-blue-600"
+					>
+						AI
+					</div>
 
-						<div class="min-w-0 flex-1">
-							<p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-								Assistant response
-							</p>
-							<p class="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-700">
-								{form.answer}
-							</p>
-						</div>
+					<p class="mt-5 text-lg font-bold text-slate-900">Unlock smarter financial insights</p>
+					<p class="mt-2 text-sm leading-6 text-slate-600">
+						Ask questions about profit, expenses, trends, alerts, and category activity in plain
+						language.
+					</p>
+
+					<a
+						href={resolve('/pricing')}
+						class="mt-6 inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
+					>
+						Upgrade to Premium
+					</a>
+				</div>
+			</div>
+
+			<div class="space-y-5">
+				<div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+					<p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
+						Included with Premium
+					</p>
+					<h2 class="mt-2 text-2xl font-bold text-slate-900">What you’ll unlock</h2>
+
+					<div class="mt-5 space-y-3">
+						{#each capabilityCards as card}
+							<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+								<p class="text-sm font-semibold text-slate-900">{card.title}</p>
+								<p class="mt-1 text-sm leading-6 text-slate-600">
+									{card.desc}
+								</p>
+							</div>
+						{/each}
 					</div>
 				</div>
-			{/if}
-		</div>
 
-		<div class="space-y-5">
-			<div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm md:p-6">
-				<p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
-					Suggested prompts
-				</p>
-				<h2 class="mt-2 text-2xl font-bold text-slate-900">Helpful questions to try</h2>
+				<div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm md:p-6">
+					<p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
+						Example prompts
+					</p>
+					<h2 class="mt-2 text-2xl font-bold text-slate-900">Questions Premium users can ask</h2>
 
-				<div class="mt-5 grid gap-3">
-					{#each promptCards as prompt}
-						<div
-							class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 transition hover:border-blue-200 hover:bg-blue-50/50"
-						>
-							<p class="text-sm font-medium text-slate-800">{prompt}</p>
-						</div>
-					{/each}
+					<div class="mt-5 grid gap-3">
+						{#each promptCards as prompt}
+							<div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+								<p class="text-sm font-medium text-slate-800">{prompt}</p>
+							</div>
+						{/each}
+					</div>
 				</div>
 			</div>
-
-			<div class="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm md:p-6">
-				<p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
-					What it can do
-				</p>
-				<h2 class="mt-2 text-2xl font-bold text-slate-900">Use it like a finance guide</h2>
-
-				<div class="mt-5 space-y-3">
-					{#each capabilityCards as card}
-						<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-							<p class="text-sm font-semibold text-slate-900">{card.title}</p>
-							<p class="mt-1 text-sm leading-6 text-slate-600">
-								{card.desc}
-							</p>
-						</div>
-					{/each}
-				</div>
-			</div>
-		</div>
-	</section>
+		</section>
+	{/if}
 </div>

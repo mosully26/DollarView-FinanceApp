@@ -10,7 +10,17 @@ export const load: PageServerLoad = async ({ locals }) => {
 		throw redirect(303, '/login');
 	}
 
-	return {};
+	const { data: profile } = await locals.supabase
+		.from('profiles')
+		.select('plan')
+		.eq('id', user.id)
+		.maybeSingle();
+
+	const isPremium = profile?.plan === 'premium';
+
+	return {
+		isPremium
+	};
 };
 
 export const actions: Actions = {
@@ -19,6 +29,20 @@ export const actions: Actions = {
 
 		if (!user) {
 			throw redirect(303, '/login');
+		}
+
+		const { data: profile } = await locals.supabase
+			.from('profiles')
+			.select('plan')
+			.eq('id', user.id)
+			.maybeSingle();
+
+		const isPremium = profile?.plan === 'premium';
+
+		if (!isPremium) {
+			return fail(403, {
+				error: 'AI Assistant is available for Premium members only.'
+			});
 		}
 
 		const formData = await request.formData();
@@ -33,7 +57,7 @@ export const actions: Actions = {
 		if (!apiKey) {
 			console.error('OPENAI_API_KEY is missing');
 			return fail(500, {
-				error: 'OPENAI_API_KEY is missing. Check your .env file and restart the server.'
+				error: 'OPENAI_API_KEY is missing. Check your environment variables.'
 			});
 		}
 
