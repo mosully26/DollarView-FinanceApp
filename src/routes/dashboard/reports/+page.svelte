@@ -10,7 +10,7 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const reportHighlights = [
+	const reportHighlights = $derived.by(() => [
 		{
 			label: 'Reporting window',
 			value: data.periodText
@@ -23,7 +23,7 @@
 			label: 'Focus',
 			value: 'Revenue, expenses, profit, and transaction activity'
 		}
-	];
+	]);
 </script>
 
 <svelte:head>

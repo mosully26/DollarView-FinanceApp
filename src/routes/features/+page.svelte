@@ -74,14 +74,20 @@
 
 			<div class="mt-16 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
 				{#each features as feature}
-					<div class="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md">
+					{@const Icon = feature.icon}
+
+					<div
+						class="rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+					>
 						<div class="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-50 text-sky-600">
-							<svelte:component this={feature.icon} size={22} />
+							<Icon size={22} />
 						</div>
 
-						<h2 class="mt-5 text-xl font-bold text-slate-900">{feature.title}</h2>
+						<h3 class="mt-5 text-xl font-bold text-slate-900">
+							{feature.title}
+						</h3>
 
-						<p class="mt-3 leading-7 text-slate-600">
+						<p class="mt-3 text-sm leading-7 text-slate-600">
 							{feature.description}
 						</p>
 					</div>
