@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # DollarView
 
 Full-stack financial tracking dashboard to monitor revenue, expenses, and profit with interactive charts and filtering.
@@ -25,3 +26,7 @@ Full-stack financial tracking dashboard to monitor revenue, expenses, and profit
 ```bash
 npm install
 npm run dev
+=======
+# DollarView-FinanceApp
+Full-stack financial tracking dashboard to monitor expenses, revenue, and profit with interactive charts and filtering
+>>>>>>> 7b8c44312553ae7f8133ce6337b0981297003f85
