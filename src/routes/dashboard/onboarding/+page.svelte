@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { PageData } from './$types';
+	import { goto } from '$app/navigation';
+	import type { ActionData, PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
+	let { data, form }: { data: PageData; form: ActionData | null } = $props();
 
 	let step = $state(data.preferences?.onboarding_step ?? 1);
 
-	let form = $state({
+	let formState = $state({
 		monthly_budget: data.preferences?.monthly_budget?.toString() ?? '',
 		primary_goal: data.preferences?.primary_goal ?? '',
 		tracks_business:
@@ -91,25 +92,54 @@
 	}
 
 	function toggleCategory(category: string) {
-		if (form.categories.includes(category)) {
-			form.categories = form.categories.filter((c) => c !== category);
+		if (formState.categories.includes(category)) {
+			formState.categories = formState.categories.filter((c) => c !== category);
 		} else {
-			form.categories = [...form.categories, category];
+			formState.categories = [...formState.categories, category];
 		}
 	}
 
 	function selectUsage(value: 'true' | 'false') {
-		form.tracks_business = value;
-		form.categories = [];
+		formState.tracks_business = value;
+		formState.categories = [];
 		if (value === 'false') {
-			form.business_type = '';
+			formState.business_type = '';
 		}
 	}
 
 	function currentCategories() {
-		return form.tracks_business === 'true' ? businessCategories : personalCategories;
+		return formState.tracks_business === 'true' ? businessCategories : personalCategories;
+	}
+
+	function formatGoal(goal: string) {
+		switch (goal) {
+			case 'saving':
+				return 'Save more money';
+			case 'reduce_expenses':
+				return 'Reduce expenses';
+			case 'tracking':
+				return 'Track everything clearly';
+			case 'growth':
+				return 'Grow business revenue';
+			default:
+				return goal;
+		}
+	}
+
+	function formatAlert(alert: string) {
+		switch (alert) {
+			case 'light':
+				return 'Light';
+			case 'balanced':
+				return 'Balanced';
+			case 'frequent':
+				return 'Frequent';
+			default:
+				return alert;
+		}
 	}
 </script>
+
 <svelte:head>
 	<title>Onboarding | DollarView</title>
 </svelte:head>
@@ -138,7 +168,9 @@
 						</p>
 					</div>
 
-					<div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm">
+					<div
+						class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600 shadow-sm"
+					>
 						{Math.round((step / totalSteps) * 100)}% complete
 					</div>
 				</div>
@@ -212,7 +244,10 @@
 						</div>
 
 						<div>
-							<label for="monthly-budget" class="mb-2 block text-sm font-medium text-slate-700">
+							<label
+								for="monthly-budget"
+								class="mb-2 block text-sm font-medium text-slate-700"
+							>
 								Or enter your own monthly budget
 							</label>
 							<input
@@ -326,7 +361,10 @@
 
 						{#if form.tracks_business === 'true'}
 							<div>
-								<label for="business-type" class="mb-2 block text-sm font-medium text-slate-700">
+								<label
+									for="business-type"
+									class="mb-2 block text-sm font-medium text-slate-700"
+								>
 									What type of business are you tracking?
 								</label>
 								<input
@@ -392,7 +430,9 @@
 								<p class="text-sm font-semibold text-slate-900">Selected categories</p>
 								<div class="mt-3 flex flex-wrap gap-2">
 									{#each form.categories as category}
-										<span class="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
+										<span
+											class="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700"
+										>
 											{category}
 										</span>
 									{/each}
@@ -434,9 +474,9 @@
 							{#each alertOptions as option}
 								<button
 									type="button"
-									onclick={() => (form.alert_preference = option.value)}
+									onclick={() => (formState.alert_preference = option.value)}
 									class={`rounded-2xl border p-5 text-left transition ${
-										form.alert_preference === option.value
+										formState.alert_preference === option.value
 											? 'border-blue-600 bg-blue-50'
 											: 'border-slate-200 hover:bg-slate-50'
 									}`}
@@ -448,12 +488,20 @@
 						</div>
 
 						<form method="POST" class="space-y-4">
-							<input type="hidden" name="monthly_budget" value={form.monthly_budget} />
-							<input type="hidden" name="primary_goal" value={form.primary_goal} />
-							<input type="hidden" name="tracks_business" value={form.tracks_business} />
-							<input type="hidden" name="business_type" value={form.business_type} />
-							<input type="hidden" name="categories" value={JSON.stringify(form.categories)} />
-							<input type="hidden" name="alert_preference" value={form.alert_preference} />
+							<input type="hidden" name="monthly_budget" value={formState.monthly_budget} />
+							<input type="hidden" name="primary_goal" value={formState.primary_goal} />
+							<input type="hidden" name="tracks_business" value={formState.tracks_business} />
+							<input type="hidden" name="business_type" value={formState.business_type} />
+							<input
+								type="hidden"
+								name="categories"
+								value={JSON.stringify(formState.categories)}
+							/>
+							<input
+								type="hidden"
+								name="alert_preference"
+								value={formState.alert_preference}
+							/>
 
 							<div class="flex justify-between">
 								<button
@@ -469,6 +517,102 @@
 								</button>
 							</div>
 						</form>
+
+						{#if form?.success && form?.summary}
+							<div
+								class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-6"
+							>
+								<div
+									class="w-full max-w-2xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-2xl"
+								>
+									<p class="text-sm font-semibold uppercase tracking-[0.25em] text-blue-600">
+										Setup complete
+									</p>
+
+									<h2 class="mt-3 text-3xl font-bold text-slate-900">
+										Your DollarView account is ready.
+									</h2>
+
+									<p class="mt-3 leading-7 text-slate-600">
+										Here’s a quick summary of the preferences you selected.
+									</p>
+
+									<div class="mt-6 grid gap-4 sm:grid-cols-2">
+										<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+											<p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+												Monthly budget
+											</p>
+											<p class="mt-2 text-lg font-bold text-slate-900">
+												${form.summary.monthly_budget ?? 'Not set'}
+											</p>
+										</div>
+
+										<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+											<p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+												Primary goal
+											</p>
+											<p class="mt-2 text-lg font-bold text-slate-900">
+												{formatGoal(form.summary.primary_goal)}
+											</p>
+										</div>
+
+										<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+											<p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+												Usage type
+											</p>
+											<p class="mt-2 text-lg font-bold text-slate-900">
+												{form.summary.tracks_business
+													? 'Business finances'
+													: 'Personal finances'}
+											</p>
+										</div>
+
+										<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+											<p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+												Business type
+											</p>
+											<p class="mt-2 text-lg font-bold text-slate-900">
+												{form.summary.business_type || 'Not provided'}
+											</p>
+										</div>
+
+										<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:col-span-2">
+											<p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+												Alert preference
+											</p>
+											<p class="mt-2 text-lg font-bold text-slate-900">
+												{formatAlert(form.summary.alert_preference)}
+											</p>
+										</div>
+
+										<div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:col-span-2">
+											<p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+												Selected categories
+											</p>
+
+											<div class="mt-3 flex flex-wrap gap-2">
+												{#each form.summary.categories as category}
+													<span
+														class="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700"
+													>
+														{category}
+													</span>
+												{/each}
+											</div>
+										</div>
+									</div>
+
+									<div class="mt-8 flex justify-end">
+										<a
+											href="/dashboard"
+											class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+										>
+											Continue to Dashboard
+										</a>
+									</div>
+								</div>
+							</div>
+						{/if}
 					</div>
 				{/if}
 			</div>

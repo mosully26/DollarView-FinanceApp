@@ -70,6 +70,16 @@ export const actions: Actions = {
 			return fail(400, { error: error.message });
 		}
 
-		throw redirect(303, '/dashboard');
+		return {
+			success: true,
+			summary: {
+				monthly_budget: monthlyBudget,
+				primary_goal: primaryGoal || 'Not selected',
+				tracks_business: tracksBusiness,
+				business_type: businessType || 'Personal use',
+				categories,
+				alert_preference: alertPreference || 'Not selected'
+			}
+		};
 	}
 };
