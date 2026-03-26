@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { resolve } from '$app/paths';
 	import CountUp from '$lib/components/CountUp.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
@@ -32,6 +33,10 @@
 		{ label: 'Tracked categories', value: '18', tone: 'slate' },
 		{ label: 'Monthly trend', value: '+12%', tone: 'green' }
 	];
+
+	const revenueValue = 18210;
+	const expensesValue = 7963;
+	const profitValue = 10247;
 </script>
 
 <svelte:head>
@@ -126,7 +131,12 @@
 					<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 						<p class="text-sm text-slate-500">Revenue</p>
 						<h2 class="mt-2 text-3xl font-extrabold text-blue-600">
-							$<CountUp value={18210} duration={4} />
+							$
+							{#if browser}
+								<CountUp value={revenueValue} duration={4} />
+							{:else}
+								{revenueValue.toLocaleString()}
+							{/if}
 						</h2>
 						<p class="mt-2 text-sm text-slate-500">Steady monthly growth</p>
 					</div>
@@ -134,7 +144,12 @@
 					<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 						<p class="text-sm text-slate-500">Expenses</p>
 						<h2 class="mt-2 text-3xl font-extrabold text-rose-600">
-							$<CountUp value={7963} duration={4} />
+							$
+							{#if browser}
+								<CountUp value={expensesValue} duration={4} />
+							{:else}
+								{expensesValue.toLocaleString()}
+							{/if}
 						</h2>
 						<p class="mt-2 text-sm text-slate-500">Organized by category</p>
 					</div>
@@ -142,7 +157,12 @@
 					<div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 						<p class="text-sm text-slate-500">Profit</p>
 						<h2 class="mt-2 text-3xl font-extrabold text-emerald-600">
-							$<CountUp value={10247} duration={4} />
+							$
+							{#if browser}
+								<CountUp value={profitValue} duration={4} />
+							{:else}
+								{profitValue.toLocaleString()}
+							{/if}
 						</h2>
 						<p class="mt-2 text-sm text-slate-500">Positive monthly margin</p>
 					</div>
