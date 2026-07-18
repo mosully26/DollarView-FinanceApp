@@ -1,28 +1,39 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 
+	type PreferenceForm = {
+		monthly_budget: string | number;
+		primary_goal: string;
+		tracks_business: 'true' | 'false';
+		business_type: string;
+		categories: string[];
+		alert_preference: string;
+	};
+
 	let { data, form }: { data: PageData; form: any } = $props();
 
-	let preferences = data.preferences;
+	const preferences = data.preferences;
 
-	let formState = $state({
+	let formState = $state<PreferenceForm>({
 		monthly_budget: preferences?.monthly_budget ?? '',
 		primary_goal: preferences?.primary_goal ?? '',
 		tracks_business: preferences?.tracks_business ? 'true' : 'false',
 		business_type: preferences?.business_type ?? '',
-		categories: preferences?.categories ?? [],
-		alert_preference: preferences?.alert_preference ?? ''
+		categories: (preferences?.categories ?? []) as string[],
+		alert_preference: preferences?.alert_preference ?? 'balanced'
 	});
 
 	function toggleCategory(category: string) {
 		if (formState.categories.includes(category)) {
-			formState.categories = formState.categories.filter((c) => c !== category);
+			formState.categories = formState.categories.filter(
+				(existingCategory) => existingCategory !== category
+			);
 		} else {
 			formState.categories = [...formState.categories, category];
 		}
 	}
 
-	const categories = [
+	const categories: string[] = [
 		'Groceries',
 		'Rent',
 		'Utilities',
@@ -42,28 +53,64 @@
 	<title>Preferences | DollarView</title>
 </svelte:head>
 
-<section class="max-w-3xl mx-auto p-6 space-y-6">
-	<h1 class="text-3xl font-bold">Preferences</h1>
-	<p class="text-slate-600">Update how DollarView personalizes your experience.</p>
+<section class="mx-auto max-w-3xl space-y-6 p-6">
+	<header>
+		<h1 class="text-3xl font-bold">Preferences</h1>
+		<p class="mt-2 text-slate-600 dark:text-slate-400">
+			Update how DollarView personalizes your experience.
+		</p>
+	</header>
 
 	<form method="POST" class="space-y-6">
 
 		<!-- Monthly Budget -->
 		<div>
-			<label class="block text-sm font-medium mb-1">Monthly Budget</label>
-			<input type="number" bind:value={formState.monthly_budget} />
+			<label
+				for="monthly-budget"
+				class="mb-1 block text-sm font-medium"
+			>
+				Monthly Budget
+			</label>
+
+			<input
+				id="monthly-budget"
+				type="number"
+				bind:value={formState.monthly_budget}
+				class="w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-900"
+			/>
 		</div>
 
 		<!-- Goal -->
 		<div>
-			<label class="block text-sm font-medium mb-1">Primary Goal</label>
-			<input type="text" bind:value={formState.primary_goal} />
+			<label
+				for="primary-goal"
+				class="mb-1 block text-sm font-medium"
+			>
+				Primary Goal
+			</label>
+
+			<input
+				id="primary-goal"
+				type="text"
+				bind:value={formState.primary_goal}
+				class="w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-900"
+			/>
 		</div>
 
-		<!-- Business Toggle -->
+		<!-- Usage -->
 		<div>
-			<label class="block text-sm font-medium mb-1">Usage Type</label>
-			<select bind:value={formState.tracks_business}>
+			<label
+				for="usage-type"
+				class="mb-1 block text-sm font-medium"
+			>
+				Usage Type
+			</label>
+
+			<select
+				id="usage-type"
+				bind:value={formState.tracks_business}
+				class="w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-900"
+			>
 				<option value="false">Personal</option>
 				<option value="true">Business</option>
 			</select>
@@ -72,57 +119,119 @@
 		<!-- Business Type -->
 		{#if formState.tracks_business === 'true'}
 			<div>
-				<label class="block text-sm font-medium mb-1">Business Type</label>
-				<input type="text" bind:value={formState.business_type} />
+				<label
+					for="business-type"
+					class="mb-1 block text-sm font-medium"
+				>
+					Business Type
+				</label>
+
+				<input
+					id="business-type"
+					type="text"
+					bind:value={formState.business_type}
+					class="w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-900"
+				/>
 			</div>
 		{/if}
 
 		<!-- Categories -->
 		<div>
-			<label class="block text-sm font-medium mb-2">Categories</label>
+			<p class="mb-2 text-sm font-medium">
+				Categories
+			</p>
+
 			<div class="flex flex-wrap gap-2">
-				{#each categories as cat}
+				{#each categories as category}
 					<button
 						type="button"
-						onclick={() => toggleCategory(cat)}
-						class={`px-3 py-1 rounded-full text-sm ${
-							formState.categories.includes(cat)
+						onclick={() => toggleCategory(category)}
+						class={`rounded-full px-3 py-1 text-sm transition ${
+							formState.categories.includes(category)
 								? 'bg-blue-600 text-white'
-								: 'bg-slate-200'
+								: 'bg-slate-200 text-slate-800 hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600'
 						}`}
 					>
-						{cat}
+						{category}
 					</button>
 				{/each}
 			</div>
 		</div>
 
-		<!-- Alerts -->
+		<!-- Alert Preference -->
 		<div>
-			<label class="block text-sm font-medium mb-1">Alert Preference</label>
-			<select bind:value={formState.alert_preference}>
+			<label
+				for="alert-preference"
+				class="mb-1 block text-sm font-medium"
+			>
+				Alert Preference
+			</label>
+
+			<select
+				id="alert-preference"
+				bind:value={formState.alert_preference}
+				class="w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-900"
+			>
 				<option value="light">Light</option>
 				<option value="balanced">Balanced</option>
 				<option value="frequent">Frequent</option>
 			</select>
 		</div>
 
-		<!-- Hidden fields -->
-		<input type="hidden" name="monthly_budget" value={formState.monthly_budget} />
-		<input type="hidden" name="primary_goal" value={formState.primary_goal} />
-		<input type="hidden" name="tracks_business" value={formState.tracks_business} />
-		<input type="hidden" name="business_type" value={formState.business_type} />
-		<input type="hidden" name="categories" value={JSON.stringify(formState.categories)} />
-		<input type="hidden" name="alert_preference" value={formState.alert_preference} />
+		<!-- Hidden Fields -->
+		<input
+			type="hidden"
+			name="monthly_budget"
+			value={String(formState.monthly_budget)}
+		/>
 
-		<button class="btn-primary">Save Preferences</button>
+		<input
+			type="hidden"
+			name="primary_goal"
+			value={formState.primary_goal}
+		/>
+
+		<input
+			type="hidden"
+			name="tracks_business"
+			value={formState.tracks_business}
+		/>
+
+		<input
+			type="hidden"
+			name="business_type"
+			value={formState.business_type}
+		/>
+
+		<input
+			type="hidden"
+			name="categories"
+			value={JSON.stringify(formState.categories)}
+		/>
+
+		<input
+			type="hidden"
+			name="alert_preference"
+			value={formState.alert_preference}
+		/>
+
+		<button
+			type="submit"
+			class="btn-primary"
+		>
+			Save Preferences
+		</button>
 
 		{#if form?.success}
-			<p class="text-green-600 text-sm">Saved successfully</p>
+			<p class="text-sm text-green-600">
+				Saved successfully.
+			</p>
 		{/if}
 
 		{#if form?.error}
-			<p class="text-red-600 text-sm">{form.error}</p>
+			<p class="text-sm text-red-600">
+				{form.error}
+			</p>
 		{/if}
 	</form>
 </section>

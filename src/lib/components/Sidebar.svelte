@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 
 	const links = [
 		{ href: '/dashboard', label: 'Overview' },
@@ -8,7 +9,7 @@
 		{ href: '/dashboard/reports', label: 'Reports' },
 		{ href: '/dashboard/alerts', label: 'Alerts' },
 		{ href: '/dashboard/notifications', label: 'Notifications' }
-	];
+	] as const;
 
 	function isActiveRoute(href: string) {
 		if (href === '/dashboard') {
@@ -41,9 +42,9 @@
 	</div>
 
 	<nav class="space-y-2">
-		{#each links as link}
+		{#each links as link (link.href)}
 			<a
-				href={link.href}
+				href={resolve(link.href)}
 				class={`flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition ${
 					isActiveRoute(link.href)
 						? 'bg-blue-600 text-white shadow-sm'
@@ -57,7 +58,7 @@
 
 	<div class="mt-6 border-t border-slate-200 pt-4 dark:border-slate-800">
 		<a
-			href="/logout"
+			href={resolve('/logout')}
 			class="flex items-center rounded-xl px-3 py-2.5 text-sm font-medium
 			text-slate-700 transition hover:bg-slate-100
 			dark:text-slate-300 dark:hover:bg-slate-800"

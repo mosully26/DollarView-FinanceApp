@@ -1,17 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import {
-		ArcElement,
-		Chart,
-		DoughnutController,
-		Legend,
-		PieController,
-		Tooltip,
-		type ChartConfiguration
-	} from 'chart.js';
+	import Chart from 'chart.js/auto';
+	import type { ChartConfiguration } from 'chart.js';
 	import type { PiePoint } from '$lib/types';
-
-	Chart.register(PieController, DoughnutController, ArcElement, Tooltip, Legend);
 
 	let {
 		data,
@@ -23,16 +14,35 @@
 		variant?: 'pie' | 'doughnut';
 	} = $props();
 
-	let canvas: HTMLCanvasElement;
-	let chart: Chart | null = null;
+	let canvas = $state<HTMLCanvasElement | undefined>(undefined);
+	let chart: Chart<'pie' | 'doughnut'> | null = null;
 
-	const revenueColors = ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#059669', '#047857'];
+	const revenueColors = [
+		'#10b981',
+		'#34d399',
+		'#6ee7b7',
+		'#a7f3d0',
+		'#059669',
+		'#047857'
+	];
 
-	const expenseColors = ['#ef4444', '#f87171', '#fca5a5', '#fecaca', '#dc2626', '#b91c1c'];
+	const expenseColors = [
+		'#ef4444',
+		'#f87171',
+		'#fca5a5',
+		'#fecaca',
+		'#dc2626',
+		'#b91c1c'
+	];
 
-	const defaultColors = ['#0ea5e9', '#8b5cf6', '#f59e0b', '#6366f1'];
+	const defaultColors = [
+		'#0ea5e9',
+		'#8b5cf6',
+		'#f59e0b',
+		'#6366f1'
+	];
 
-	let colors = $derived(
+	const colors = $derived(
 		title.toLowerCase().includes('revenue')
 			? revenueColors
 			: title.toLowerCase().includes('expense')
@@ -40,14 +50,21 @@
 				: defaultColors
 	);
 
-	function draw() {
+	function destroyChart() {
+		chart?.destroy();
+		chart = null;
+	}
+
+	function drawChart() {
 		if (!canvas) return;
 
-		chart?.destroy();
+		destroyChart();
 
 		const safeData = data ?? [];
 
-		const config: ChartConfiguration<'pie' | 'doughnut'> = {
+		if (safeData.length === 0) return;
+
+		const config: ChartConfiguration<'pie' | 'doughnut', number[], string> = {
 			type: variant,
 			data: {
 				labels: safeData.map((item) => item.label),
@@ -55,7 +72,9 @@
 					{
 						label: title,
 						data: safeData.map((item) => item.value),
-						backgroundColor: safeData.map((_, index) => colors[index % colors.length]),
+						backgroundColor: safeData.map(
+							(_, index) => colors[index % colors.length]
+						),
 						borderWidth: 2
 					}
 				]
@@ -75,22 +94,48 @@
 	}
 
 	onMount(() => {
-		draw();
-		return () => chart?.destroy();
+		drawChart();
+
+		return () => {
+			destroyChart();
+		};
 	});
 
 	$effect(() => {
-		data;
-		title;
-		variant;
-		colors;
-		draw();
+		const currentData = data;
+		const currentTitle = title;
+		const currentVariant = variant;
+		const currentColors = colors;
+		const currentCanvas = canvas;
+
+		if (
+			currentCanvas &&
+			currentData &&
+			currentTitle &&
+			currentVariant &&
+			currentColors
+		) {
+			queueMicrotask(drawChart);
+		}
 	});
 </script>
 
 <div class="card p-5">
-	<h3 class="mb-4 text-lg font-bold">{title}</h3>
+	<h3 class="mb-4 text-lg font-bold text-slate-900 dark:text-white">
+		{title}
+	</h3>
+
 	<div class="h-80">
-		<canvas bind:this={canvas}></canvas>
+		{#if data?.length}
+			<canvas bind:this={canvas}></canvas>
+		{:else}
+			<div
+				class="flex h-full items-center justify-center rounded-2xl border
+				border-dashed border-slate-200 bg-slate-50 text-sm text-slate-500
+				dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
+			>
+				No data for this period
+			</div>
+		{/if}
 	</div>
 </div>

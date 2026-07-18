@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { resolve } from '$app/paths';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import type { LayoutData } from './$types';
 
@@ -111,20 +112,20 @@
 			</div>
 
 			<nav class="space-y-2">
-				{#each navItems as item}
-					<a
-						href={item.href}
-						class={`block rounded-xl px-4 py-3 text-sm font-medium transition ${
-							isActiveRoute(item.href)
-								? 'bg-blue-600 text-white shadow-sm'
-								: isDark
-									? 'text-slate-300 hover:bg-slate-800'
-									: 'text-slate-700 hover:bg-slate-100'
-						}`}
-					>
-						{item.label}
-					</a>
-				{/each}
+					{#each navItems as item (item.href)}
+						<a
+							href={resolve(item.href)}
+							class={`block rounded px-3 py-2 transition ${
+								isActiveRoute(item.href)
+									? 'bg-blue-600 text-white shadow-sm'
+									: isDark
+										? 'text-slate-300 hover:bg-slate-800'
+										: 'text-slate-700 hover:bg-slate-100'
+							}`}
+						>
+							{item.label}
+						</a>
+					{/each}
 			</nav>
 
 			<div

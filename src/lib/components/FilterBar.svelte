@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 
+	type Plan = 'free' | 'premium';
+
 	type FilterItem = {
 		label: string;
 		value: string;
@@ -14,7 +16,7 @@
 	}: {
 		basePath: string;
 		period: string;
-		plan?: 'free' | 'premium';
+		plan?: Plan;
 	} = $props();
 
 	const periods: FilterItem[] = [
@@ -31,9 +33,9 @@
 		{ label: 'All Time', value: 'all', premium: true }
 	];
 
-	const visiblePeriods = periods.filter((item) => {
-		return plan === 'premium' || !item.premium;
-	});
+	const visiblePeriods = $derived(
+		periods.filter((item) => plan === 'premium' || !item.premium)
+	);
 
 	function submitPeriodForm(event: Event) {
 		const select = event.currentTarget as HTMLSelectElement;
@@ -42,11 +44,11 @@
 </script>
 
 <div class="w-full">
-	<form method="GET" action={resolve(basePath)} class="space-y-3">
+	<form method="GET" action={basePath} class="space-y-3">
 		<div class="flex flex-col gap-2 sm:flex-row sm:items-center">
 			<label
 				for="period-filter"
-				class="shrink-0 text-sm font-semibold text-slate-700"
+				class="shrink-0 text-sm font-semibold text-slate-700 dark:text-slate-300"
 			>
 				Period
 			</label>
@@ -56,7 +58,11 @@
 				name="period"
 				value={period}
 				onchange={submitPeriodForm}
-				class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm outline-none transition hover:border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+				class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5
+				text-sm font-medium text-slate-700 shadow-sm outline-none transition
+				hover:border-slate-300 focus:border-blue-500 focus:ring-4 focus:ring-blue-100
+				dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200
+				dark:hover:border-slate-600 dark:focus:border-blue-400 dark:focus:ring-blue-950"
 			>
 				{#each visiblePeriods as item (item.value)}
 					<option value={item.value}>
@@ -68,15 +74,18 @@
 
 		{#if plan === 'free'}
 			<div
-				class="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+				class="flex flex-col gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3
+				dark:border-slate-700 dark:bg-slate-800
+				sm:flex-row sm:items-center sm:justify-between"
 			>
-				<p class="text-sm leading-5 text-slate-600">
+				<p class="text-sm leading-5 text-slate-600 dark:text-slate-300">
 					Unlock longer reporting ranges with Premium.
 				</p>
 
 				<a
 					href={resolve('/pricing')}
-					class="shrink-0 text-sm font-semibold text-blue-600 transition hover:text-blue-700"
+					class="shrink-0 text-sm font-semibold text-blue-600 transition
+					hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
 				>
 					View Premium
 				</a>

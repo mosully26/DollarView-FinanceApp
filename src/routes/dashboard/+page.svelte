@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import FilterBar from '$lib/components/FilterBar.svelte';
 	import MetricCard from '$lib/components/MetricCard.svelte';
 	import PieChart from '$lib/components/PieChart.svelte';
@@ -81,10 +82,12 @@
 
 			<div class="relative flex flex-col gap-8 xl:flex-row xl:items-end xl:justify-between">
 				<div class="max-w-3xl">
-					<p class="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-blue-600 dark:text-blue-400">
-						Overview
-					</p>
-
+					<div
+					class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700"
+				>
+					<span class="inline-block h-2 w-2 rounded-full bg-blue-600"></span>
+					Financial reporting
+				</div>
 					<h1 class="text-4xl font-extrabold tracking-tight text-slate-900 md:text-5xl">
 						{data.business.name}
 					</h1>
@@ -95,7 +98,7 @@
 					</p>
 
 					<div class="mt-8 grid gap-4 md:grid-cols-3">
-						{#each quickStats as stat}
+						{#each quickStats as stat (stat.title)}
 							<div class="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm backdrop-blur">
 								<p class="text-sm font-semibold uppercase tracking-[0.2em] text-blue-600">
 									{stat.title}
@@ -183,7 +186,7 @@
 							additional visual analysis.
 						</p>
 						<a
-							href="/pricing"
+							href={resolve('/pricing')}
 							class="mt-5 inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700"
 						>
 							Upgrade to Premium
@@ -212,7 +215,7 @@
 							reporting tools.
 						</p>
 						<a
-							href="/pricing"
+							href={resolve('/pricing')}
 							class="mt-5 inline-flex items-center justify-center rounded-xl border border-blue-200 px-5 py-3 font-semibold text-blue-600 transition hover:bg-blue-50"
 						>
 							View Premium Features
