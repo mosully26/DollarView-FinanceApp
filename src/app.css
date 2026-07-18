@@ -22,21 +22,13 @@ body {
 		sans-serif;
 }
 
-html {
-	background: #ffffff;
-	color: #0f172a;
-}
-
+html,
 body {
 	background: #ffffff;
 	color: #0f172a;
 }
 
-html.dark {
-	background: #020617;
-	color: #f8fafc;
-}
-
+html.dark,
 html.dark body {
 	background: #020617;
 	color: #f8fafc;
@@ -122,100 +114,4 @@ html.dark .badge-expense {
 
 html.dark .badge-revenue {
 	@apply bg-emerald-950 text-emerald-300;
-}
-
-/* Dashboard */
-
-.dashboard-shell {
-	min-height: 100vh;
-	background: #ffffff;
-	color: #0f172a;
-}
-
-html.dark .dashboard-shell {
-	background: #020617;
-	color: #f8fafc;
-}
-
-/* Sidebar */
-
-.dashboard-shell aside {
-	background: #ffffff;
-	color: #0f172a;
-	border-color: rgb(226 232 240);
-}
-
-html.dark .dashboard-shell aside {
-	background: #0f172a;
-	color: #f8fafc;
-	border-color: rgb(30 41 59);
-}
-
-/* Header */
-
-.dashboard-shell header {
-	background: rgba(255, 255, 255, 0.95);
-	color: #0f172a;
-	border-color: rgb(226 232 240);
-}
-
-html.dark .dashboard-shell header {
-	background: rgba(15, 23, 42, 0.95);
-	color: #f8fafc;
-	border-color: rgb(30 41 59);
-}
-
-/* Main page area */
-
-.dashboard-shell main {
-	background: #ffffff;
-	color: #0f172a;
-}
-
-html.dark .dashboard-shell main {
-	background: #020617;
-	color: #f8fafc;
-}
-
-/* Headings */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	color: inherit;
-}
-
-/* Keep blue section labels blue */
-
-.dashboard-shell .text-sky-600 {
-	color: rgb(2 132 199);
-}
-
-html.dark .dashboard-shell .text-sky-600 {
-	color: rgb(56 189 248);
-}
-
-/* Light summary boxes */
-
-.card .bg-slate-50 {
-	background-color: rgb(248 250 252);
-}
-
-html.dark .card .bg-slate-50 {
-	background-color: rgb(30 41 59);
-}
-
-html.dark .card .bg-slate-50 .text-slate-800 {
-	color: rgb(241 245 249);
-}
-
-html.dark .card .bg-slate-50 .text-slate-600 {
-	color: rgb(203 213 225);
-}
-
-html.dark .card .bg-slate-50 .text-slate-500 {
-	color: rgb(148 163 184);
 }
