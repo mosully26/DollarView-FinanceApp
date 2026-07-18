@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { Sun, Moon } from 'lucide-svelte';
 
 	let {
@@ -9,37 +10,26 @@
 
 	let theme = $state<'light' | 'dark'>('light');
 
-	function applyTheme(nextTheme: 'light' | 'dark') {
+	function setTheme(nextTheme: 'light' | 'dark') {
 		theme = nextTheme;
 
-		if (typeof document !== 'undefined') {
-			document.documentElement.classList.toggle('dark', nextTheme === 'dark');
-			localStorage.setItem('dv-theme', nextTheme);
-		}
+		if (typeof document === 'undefined') return;
+
+		document.documentElement.classList.toggle('dark', nextTheme === 'dark');
+		localStorage.setItem('dv-theme', nextTheme);
 	}
 
-	function forceLightTheme() {
-		theme = 'light';
+	onMount(() => {
+		const savedTheme = localStorage.getItem('dv-theme');
 
-		if (typeof document !== 'undefined') {
-			document.documentElement.classList.remove('dark');
-			localStorage.setItem('dv-theme', 'light');
-		}
-	}
-
-	$effect(() => {
-		if (typeof window === 'undefined') return;
-
-		if (!isPremium) {
-			forceLightTheme();
+		if (savedTheme === 'dark' || savedTheme === 'light') {
+			setTheme(savedTheme);
 			return;
 		}
 
-		const savedTheme = localStorage.getItem('dv-theme') as 'light' | 'dark' | null;
-		const preferredDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-		const initialTheme = savedTheme ?? (preferredDark ? 'dark' : 'light');
-		applyTheme(initialTheme);
+		setTheme(prefersDark ? 'dark' : 'light');
 	});
 </script>
 
@@ -47,12 +37,14 @@
 	<div class="flex items-center gap-2">
 		<button
 			type="button"
+			aria-label="Use light mode"
+			aria-pressed={theme === 'light'}
+			onclick={() => setTheme('light')}
 			class={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition ${
 				theme === 'light'
 					? 'border-blue-600 bg-blue-600 text-white'
-					: 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+					: 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800'
 			}`}
-			onclick={() => applyTheme('light')}
 		>
 			<Sun size={16} />
 			<span>Light</span>
@@ -60,12 +52,14 @@
 
 		<button
 			type="button"
+			aria-label="Use dark mode"
+			aria-pressed={theme === 'dark'}
+			onclick={() => setTheme('dark')}
 			class={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition ${
 				theme === 'dark'
 					? 'border-blue-600 bg-blue-600 text-white'
-					: 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50'
+					: 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800'
 			}`}
-			onclick={() => applyTheme('dark')}
 		>
 			<Moon size={16} />
 			<span>Dark</span>

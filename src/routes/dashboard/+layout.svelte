@@ -56,15 +56,6 @@
 
 		return () => window.clearTimeout(timer);
 	});
-
-	$effect(() => {
-		if (typeof document === 'undefined') return;
-
-		if (!data.isPremium) {
-			document.documentElement.classList.remove('dark');
-			localStorage.setItem('dv-theme', 'light');
-		}
-	});
 </script>
 
 <div class="min-h-screen bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
