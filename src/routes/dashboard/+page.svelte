@@ -109,24 +109,30 @@
 				</div>
 
 				<div class="w-full max-w-xl">
-					<div class="rounded-[1.5rem] border border-slate-200 bg-white/85 p-4 shadow-sm backdrop-blur">
-						<div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-							<div>
-								<p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
+					<div
+						class="rounded-[1.5rem] border border-slate-200 bg-white/90 p-5 shadow-sm backdrop-blur"
+					>
+						<div class="grid gap-5 sm:grid-cols-[auto_1fr] sm:items-end">
+							<div class="min-w-[130px]">
+								<p class="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
 									Current range
 								</p>
-								<p class="mt-2 text-lg font-bold text-slate-900">{data.periodText}</p>
+
+								<p class="mt-2 text-lg font-bold text-slate-900">
+									{data.periodText}
+								</p>
 							</div>
 
-							<FilterBar
-								basePath="/dashboard"
-								period={data.period}
-								plan={data.isPremium ? 'premium' : 'free'}
-							/>
+							<div class="min-w-0">
+								<FilterBar
+									basePath="/dashboard"
+									period={data.period}
+									plan={data.isPremium ? 'premium' : 'free'}
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 		</section>
 
 		<div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
