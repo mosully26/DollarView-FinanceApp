@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { CountUp as CountUpJs } from 'countup.js';
 
 	let { value, duration = 2.5 }: { value: number; duration?: number } = $props();
 
 	let el: HTMLSpanElement;
 
-	onMount(() => {
+	onMount(async () => {
+		const { CountUp: CountUpJs } = await import('countup.js');
+
 		const counter = new CountUpJs(el, value, {
 			duration,
 			separator: ','
@@ -14,8 +15,10 @@
 
 		if (!counter.error) {
 			counter.start();
+		} else {
+			el.textContent = value.toLocaleString();
 		}
 	});
 </script>
 
-<span bind:this={el}></span>
+<span bind:this={el}>{value.toLocaleString()}</span>
