@@ -1,6 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { ArcElement, Chart, DoughnutController, Legend, PieController, Tooltip, type ChartConfiguration } from 'chart.js';
+	import {
+		ArcElement,
+		Chart,
+		DoughnutController,
+		Legend,
+		PieController,
+		Tooltip,
+		type ChartConfiguration
+	} from 'chart.js';
 	import type { PiePoint } from '$lib/types';
 
 	Chart.register(PieController, DoughnutController, ArcElement, Tooltip, Legend);
@@ -18,31 +26,37 @@
 	let canvas: HTMLCanvasElement;
 	let chart: Chart | null = null;
 
-	const colors = [
-		'#0ea5e9',
-		'#10b981',
-		'#8b5cf6',
-		'#f59e0b',
-		'#ef4444',
-		'#14b8a6',
-		'#3b82f6',
-		'#6366f1'
-	];
+	const revenueColors = ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#059669', '#047857'];
+
+	const expenseColors = ['#ef4444', '#f87171', '#fca5a5', '#fecaca', '#dc2626', '#b91c1c'];
+
+	const defaultColors = ['#0ea5e9', '#8b5cf6', '#f59e0b', '#6366f1'];
+
+	let colors = $derived(
+		title.toLowerCase().includes('revenue')
+			? revenueColors
+			: title.toLowerCase().includes('expense')
+				? expenseColors
+				: defaultColors
+	);
 
 	function draw() {
 		if (!canvas) return;
 
 		chart?.destroy();
 
+		const safeData = data ?? [];
+
 		const config: ChartConfiguration<'pie' | 'doughnut'> = {
 			type: variant,
 			data: {
-				labels: data.map((item) => item.label),
+				labels: safeData.map((item) => item.label),
 				datasets: [
 					{
 						label: title,
-						data: data.map((item) => item.value),
-						backgroundColor: data.map((_, index) => colors[index % colors.length])
+						data: safeData.map((item) => item.value),
+						backgroundColor: safeData.map((_, index) => colors[index % colors.length]),
+						borderWidth: 2
 					}
 				]
 			},
@@ -66,6 +80,10 @@
 	});
 
 	$effect(() => {
+		data;
+		title;
+		variant;
+		colors;
 		draw();
 	});
 </script>

@@ -38,7 +38,7 @@
 					{
 						label: 'Expenses',
 						data: data.map((item) => item.expenses),
-						backgroundColor: 'rgba(59, 130, 246, 0.85)',
+						backgroundColor: 'rgba(239, 68, 68, 0.85)',
 						borderRadius: 8
 					}
 				]
