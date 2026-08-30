@@ -1,8 +1,5 @@
 <script lang="ts">
-	// Import individual icon components to avoid TypeScript module definition issues
-	import Sun from 'lucide-svelte/icons/sun.svelte';
-	import Moon from 'lucide-svelte/icons/moon.svelte';
-	import { resolve } from '$app/navigation';
+	import { Sun, Moon } from 'lucide-svelte';
 
 	let {
 		isPremium = false,
@@ -21,7 +18,7 @@
 			type="button"
 			aria-label="Use light mode"
 			aria-pressed={theme === 'light'}
-			on:click={() => onThemeChange('light')}
+			onclick={() => onThemeChange('light')}
 			class={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition ${
 				theme === 'light'
 					? 'border-blue-600 bg-blue-600 text-white'
@@ -36,7 +33,7 @@
 			type="button"
 			aria-label="Use dark mode"
 			aria-pressed={theme === 'dark'}
-			on:click={() => onThemeChange('dark')}
+			onclick={() => onThemeChange('dark')}
 			class={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition ${
 				theme === 'dark'
 					? 'border-blue-600 bg-blue-600 text-white'
